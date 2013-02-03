@@ -4,4 +4,6 @@ I've cloned the repository and I can add files now.
 
 Moved from bash shell clone to Eclipse EGit clone.
 
+I've placed the main and project into a folder along with the Eclipse project information that it requires for a Git project import.
+
 Kevin
