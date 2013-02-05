@@ -2,7 +2,8 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Main extends BasicGame{
-
+	
+	// Main variables
 	int key_pressed = 0;
 	Image background;
 	Image car;
