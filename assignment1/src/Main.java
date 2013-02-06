@@ -5,17 +5,26 @@ public class Main extends BasicGame{
 	
 	// Main variables
 	int key_pressed = 0;
+	float temp = 0;
 	Image background;
-	Image car;
+	Image tempCarImage;
+	Image carImage;
 	float speed = 0.2f;
-	float x = 200, y = 500;
-	float angle_x = 0;
-	double angle = 0;
-	Vector2f acceleration;
-	Vector2f force;
-	Vector2f velocity;
-	Vector2f position;
-	float mass;
+	float f_carX = 200, f_carY = 500;
+	float f_theta = 0;
+	float f_angleX = 0;
+	double d_angle = 0;
+	Vector2f V2f_acceleration;
+	Vector2f V2f_force;
+	Vector2f V2f_velocity;
+	Vector2f V2f_position;
+	float f_carMass;
+	
+	// Car entity
+	private int id = 1;
+	public CCarEntity C_car;
+	
+	
 	
 	public Main(String title) {
 		super(title);
@@ -33,83 +42,72 @@ public class Main extends BasicGame{
 	public void render(GameContainer gc, Graphics g) throws SlickException {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, 800, 600);
-		car.draw(position.x, position.y, 40, 70);
+
+
 		g.setColor(Color.black);
 		g.fillRect(400, 100, 30, 300);
 		g.fillRect(400, 70, 200, 30);
 		
-		car.setCenterOfRotation(20, 50);
-		if(key_pressed == 1)
-			car.rotate(.2f);
-		else if(key_pressed == 2)
-			car.rotate(-.2f);
+		tempCarImage = C_car.getImagePointer();
+		tempCarImage.setCenterOfRotation(20, 50);  //  car.setCenterOfRotation(20, 50);
+		C_car.getImagePointer().draw(V2f_position.x, V2f_position.y, 40 , 70); //car.draw(position.x, position.y, 40, 70);
 		
-		g.drawString("Car Rotation: " + car.getRotation(), 100, 10);
-		g.drawString("x: " + position.x + " y: " + position.y, 100, 25);
+		
+		if(key_pressed == 1)
+			
+			tempCarImage.rotate(f_theta); //rotate(.2f);
+		else if(key_pressed == 2)
+			tempCarImage.rotate(f_theta); // rotate(-.2f);
+	
+		g.draw(C_car.C_sensor.line);
+		g.drawString("Car Rotation: " + tempCarImage.getRotation(), 100, 10);
+		g.drawString("x: " + V2f_position.x + " y: " + V2f_position.y, 100, 25);
+		
 		
 	}
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		//background = new Image("background.jpg");
-		car = new Image("car.png");
-		position = new Vector2f(x, y);
-	    velocity = new Vector2f(0, 0);
-		
+		carImage = new Image("car.png");
+		V2f_position  = new Vector2f(f_carX, f_carY);
+		V2f_velocity = new Vector2f(0, 0);
+		C_car = new CCarEntity(f_carX, f_carY, id, carImage, f_carMass); // No bounding circle
 	}
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		Input input = gc.getInput();
 		
-		if(input.isKeyDown(Input.KEY_LEFT))
+		C_car.entityUpdate(delta, V2f_velocity, V2f_position, f_theta, input);
+		
+		//V2f_velocity = C_car.getV2fVelocity();
+		System.out.println("----------" + (f_theta = C_car.getTheta()));
+		key_pressed = C_car.getKeyPressed();
+		
+		
+		/*
+		if(input.isKeyDown(Input.KEY_LEFT)){
 			key_pressed = 2;
-		else if(input.isKeyDown(Input.KEY_RIGHT))
+			f_theta = (f_theta - 1.0f) * ((float)delta/100);
+		}
+		else if(input.isKeyDown(Input.KEY_RIGHT)){
 			key_pressed = 1;
+			f_theta = (f_theta + 1.0f) * ((float)delta/100);
+		}
 		else
 			key_pressed = 0;
 
 	    if (input.isKeyDown(Input.KEY_UP)) {
-	        this.move(delta);
+	        C_car.move(delta, V2f_velocity, V2f_position, f_theta);  // runs move method for car // move(delta);  // this.move(delta); 
+	      
 	    } 
 	    else {
-	        velocity = new Vector2f(0, 0);
+	    	V2f_velocity = new Vector2f(0, 0);
 	    }
+	    */
 		
 	}
 	
-	public void move(float delta) {
-	    /*
-	     * Acceleration = Force / Mass
-	     * Velocity += Acceleration * ElapsedTime (delta)
-	     * Position += Velocity * ElapsedTime (delta)
-	     */
-	    //System.out.println(delta); //debugging
-	    //delta = delta/10; //debugging
-		
-		acceleration = new Vector2f(0, 0);
-	    angle = car.getRotation();
-	    if(angle > 0 && angle < 90){
-	    	velocity.x = (float)Math.cos(Math.toRadians(angle));
-		    velocity.y = -(float)(Math.cos(Math.toRadians(angle)) / Math.tan(Math.toRadians(angle)));
-	    }
-	    else if(angle > 90 && angle < 180){
-	    	velocity.x = -(float)Math.cos(Math.toRadians(angle));
-		    velocity.y = (float)(Math.cos(Math.toRadians(angle)) / Math.tan(Math.toRadians(angle)));
-	    }
-	    else if(angle < 0 && angle > -90){
-	    	velocity.x = -(float)Math.cos(Math.toRadians(angle));
-		    velocity.y = (float)(Math.cos(Math.toRadians(angle)) / Math.tan(Math.toRadians(angle)));
-	    }
-	    else if(angle < -90 && angle > -180){
-	    	velocity.x = (float)Math.cos(Math.toRadians(angle));
-		    velocity.y = -(float)(Math.cos(Math.toRadians(angle)) / Math.tan(Math.toRadians(angle)));
-	    }
-	    
-	    position = position.add(velocity);
-	}
-	public Vector2f angleToVector(double angle) {
-	    return new Vector2f((float)Math.cos(angle), (float)Math.sin(angle));
-	}
-
+	
 }
