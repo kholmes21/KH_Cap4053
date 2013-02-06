@@ -65,7 +65,7 @@ public class CEntity {
 		this.m_imgOriginal = picture;
 	}
 	
-	// Get picture - some temporary picture
+	// Get picture - some original
 	public Image getOriginalPicture(){
 		return this.m_imgOriginal;
 	}
@@ -75,7 +75,7 @@ public class CEntity {
 		this.m_imgPtr_picture = picture;
 	}
 	
-	// Get picture - some temporary picture
+	// Get picture - what picture is currently being pointed to
 	public Image getImagePointer(){
 		return this.m_imgPtr_picture;
 	}

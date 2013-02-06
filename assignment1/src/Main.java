@@ -50,8 +50,8 @@ public class Main extends BasicGame{
 		
 		tempCarImage = C_car.getImagePointer();
 		tempCarImage.setCenterOfRotation(20, 50);  //  car.setCenterOfRotation(20, 50);
-		C_car.getImagePointer().draw(V2f_position.x, V2f_position.y, 40 , 70); //car.draw(position.x, position.y, 40, 70);
-		
+		C_car.getImagePointer().draw(C_car.getV2fPosition().x, C_car.getV2fPosition().y, 40 , 70); //car.draw(position.x, position.y, 40, 70);
+											//V2f_position.x, V2f_position.y,
 		
 		if(key_pressed == 1)
 			

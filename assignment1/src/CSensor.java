@@ -20,12 +20,13 @@ public class CSensor {
 	public Vector2f vector = new Vector2f();
 	
 	// Turn sensors on and off
-	public boolean m_bl_rangeFinder;
-	public boolean m_bl_agentSensor;
-	public boolean m_bl_radar;
+	public boolean m_bl_rangeFinder = OFF;
+	public boolean m_bl_agentSensor = OFF;
+	public boolean m_bl_radar = OFF;
 	
 	// Range finder
 	public int distance = 0;
+	public float f_theta = 0.0f;
 	//private float[] fa_center = new float[3];
 	//private float[] fa_vectorCalc = {-1000.0f, -1000.0f, -1000.0f, -1000.0f};
 	
@@ -74,14 +75,16 @@ public class CSensor {
 	// Range finder
 	public void rangeFinder(float theta, Vector2f m_V2f_position, Vector2f m_V2f_velocity ){
 		
-		System.out.println("RANGE FINDER " + "Theta: " + theta);
+				
+		f_tempX =  (m_V2f_position.x + 20);
+		f_tempY =  (m_V2f_position.y + 35);
+		f_theta = C_entity.getImagePointer().getRotation();
 		
-		f_tempX =  m_V2f_position.x;
-		f_tempY =  m_V2f_position.y;
+		System.out.println("RANGE FINDER " + "Theta: " + theta + "F_theta " + f_theta);
 		
 		// Current x position = x + v * cos(theta) v is set to sensor length of 80
 		line.setLocation(f_tempX, f_tempY);
-		line.set(f_tempX, f_tempY, ((float)(f_tempX * feelerLength * Math.cos(theta))), ((float)(f_tempY * feelerLength * Math.cos(theta))));
+		line.set(f_tempX, f_tempY, ((float)(f_tempX * feelerLength * Math.cos(f_theta))), ((float)(f_tempY * feelerLength * Math.sin(f_theta))));
 	
 	}
 	
