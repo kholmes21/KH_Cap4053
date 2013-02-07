@@ -1,4 +1,6 @@
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Main extends BasicGame{
@@ -24,6 +26,9 @@ public class Main extends BasicGame{
 	private int id = 1;
 	public CCarEntity C_car;
 	
+	// Walls
+	public static Shape obstacle1 = null;
+	public static Shape obstacle2 = null;
 	
 	
 	public Main(String title) {
@@ -40,39 +45,63 @@ public class Main extends BasicGame{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		g.setColor(Color.white);
-		g.fillRect(0, 0, 800, 600);
-
-
-		g.setColor(Color.black);
-		g.fillRect(400, 100, 30, 300);
-		g.fillRect(400, 70, 200, 30);
 		
+		// Background
+		background.draw();
+		//g.setColor(Color.white);
+		//g.fillRect(0, 0, 800, 600);
+		
+		// Walls for collision
+		g.setColor(new Color(189,153,167));
+		g.fill(obstacle1);
+		g.fill(obstacle2);
+		
+		// Player objects
 		tempCarImage = C_car.getImagePointer();
 		tempCarImage.setCenterOfRotation(20, 50);  //  car.setCenterOfRotation(20, 50);
 		C_car.getImagePointer().draw(C_car.getV2fPosition().x, C_car.getV2fPosition().y, 40 , 70); //car.draw(position.x, position.y, 40, 70);
 											//V2f_position.x, V2f_position.y,
 		
+		// Image rotation
 		if(key_pressed == 1)
 			
 			tempCarImage.rotate(f_theta); //rotate(.2f);
 		else if(key_pressed == 2)
 			tempCarImage.rotate(f_theta); // rotate(-.2f);
-	
-		g.draw(C_car.C_sensor.line);
-		g.drawString("Car Rotation: " + tempCarImage.getRotation(), 100, 10);
-		g.drawString("x: " + V2f_position.x + " y: " + V2f_position.y, 100, 25);
+		
+		// Render sensors
+		C_car.C_sensor.sensorRender(g);
+		
+		// Display data
+		g.setColor(new Color(0, 0, 0));
+		g.drawString("Car Rotation: " + tempCarImage.getRotation(), 10, 20);
+		g.drawString("x: " + V2f_position.x + " y: " + V2f_position.y, 10, 35);
+		
 		
 		
 	}
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		//background = new Image("background.jpg");
+		
+		// Background
+		background = new Image("background.jpg");
+		
+		// Entities
 		carImage = new Image("car.png");
+		C_car = new CCarEntity(f_carX, f_carY, id, carImage, f_carMass); // No bounding circle
+		
+		// Vector2f
 		V2f_position  = new Vector2f(f_carX, f_carY);
 		V2f_velocity = new Vector2f(0, 0);
-		C_car = new CCarEntity(f_carX, f_carY, id, carImage, f_carMass); // No bounding circle
+		
+		// Walls
+		float []points = {300,250,350,250,350,500,300,500}; // y coordinates are (max y - (coordinate))
+		float []points2 = {160, 180, 600, 180, 600, 230, 160, 230};
+		obstacle1 = new Polygon(points);
+		obstacle2 = new Polygon(points2);
+		
+		
 	}
 
 	@Override

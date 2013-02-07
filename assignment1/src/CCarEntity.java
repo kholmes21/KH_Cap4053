@@ -161,7 +161,7 @@ public class CCarEntity extends CEntity{
 	    return new Vector2f((float)Math.cos(angle), (float)Math.sin(angle));
 	}
 
-
+	
 	// Get theta
 	public float getTheta(){
 		return m_f_theta;
