@@ -80,11 +80,10 @@ public class CCarEntity extends CEntity{
 	// Update function for entity
 	public void entityUpdate(float delta, Vector2f V2f_velocity, Vector2f V2f_position, float f_theta, Input input){
 		
-		//System.out.println("IN P and V" + V2f_position + "  " + V2f_velocity);
 		m_f_theta = f_theta;              // To guarantee that theta passed in is passed to sensor update if as-is unless changed
 		m_V2f_velocity = V2f_velocity;    // by one of the *if* statements below.
 		m_V2f_position = V2f_position;
-		//System.out.println("Copied P and V" + m_V2f_position + "  " + m_V2f_velocity);
+		
 		
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			m_key_pressed = 2;
@@ -105,7 +104,7 @@ public class CCarEntity extends CEntity{
 	    else {
 	    	m_V2f_velocity.set(0, 0);   // m_V2f_velocity = new Vector2f(0, 0); // This class has a new, empty vector above
 	    }
-		//move(delta, V2f_velocity, V2f_position, f_theta);
+		
 	    
 	    // Update sensors
 		this.C_sensor.sensorUpdate(m_f_theta, m_V2f_position, m_V2f_velocity);
