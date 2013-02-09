@@ -19,17 +19,43 @@ public class Main extends BasicGame{
 	float f_theta = 0;
 	float f_angleX = 0;
 	double d_angle = 0;
-	Vector2f V2f_acceleration;
-	Vector2f V2f_force;
-	Vector2f V2f_velocity;
-	Vector2f V2f_position;
+	Vector2f v2f_acceleration;
+	Vector2f v2f_force;
+	Vector2f v2f_velocity;
+	Vector2f v2f_position;
 	float f_carMass;
 	Input input;
 	Input keyboard;
 	
+	// Other agents
+	Image image_agent1;
+	Image image_agent2;
+	Image image_agent3;
+	Image image_agent4;
+	float f_thetaAgt1 = 0;
+	float f_thetaAgt2 = 0;
+	float f_thetaAgt3 = 0;
+	float f_thetaAgt4 = 0;
+	
+	Vector2f v2f_positionAgt1;
+		
+	Vector2f v2f_positionAgt2;	// get these working later
+	Vector2f v2f_velocityAgt2;
+	Vector2f v2f_positionAgt3;	
+	Vector2f v2f_positionAgt4;
+	
 	// Car entity
-	private int id = 1;
+	private int id = 1;  // ID 1 is for the player entity
 	public CCarEntity C_car;
+	
+	// Enemy entities
+	public CEnemyAgt C_agent1;
+	public CEnemyAgt C_agent2;
+	public CEnemyAgt C_agent3;
+	public CEnemyAgt C_agent4;
+	public static ArrayList<CEnemyAgt> agentArray;
+	public static final boolean ON = true;
+	public static final boolean OFF = false;
 	
 	// Mouse tracking
 	public float f_mouseX = 0;
@@ -74,17 +100,38 @@ public class Main extends BasicGame{
 		//g.fillRect(0, 0, 800, 600);
 		
 		// Walls for collision
-		g.setColor(new Color(189,153,167));
+		g.setColor(new Color(0,0,0));	//g.setColor(new Color(189,153,167));
 		g.fill(obstacle1);
 		g.fill(obstacle2);
-		g.setColor(Color.white);
-		g.draw(westHigh);	g.draw(eastHigh);	g.draw(westLow); g.draw(eastLow);
+		//g.setColor(Color.white);
+		//g.draw(westHigh);	g.draw(eastHigh);	g.draw(westLow); g.draw(eastLow);
 		
 		// Player objects
 		tempCarImage = C_car.getImagePointer();
 		tempCarImage.setCenterOfRotation(20, 50);  //  car.setCenterOfRotation(20, 50);
-		C_car.getImagePointer().draw(C_car.getV2fPosition().x, C_car.getV2fPosition().y, 40 , 70); //car.draw(position.x, position.y, 40, 70);
-											//V2f_position.x, V2f_position.y,
+		C_car.getImagePointer().draw(C_car.getV2fPosition().x, C_car.getV2fPosition().y, 40 , 70);
+		
+		// Enemy agents
+		
+		image_agent1.setCenterOfRotation(20, 50);
+		C_agent1.getImagePointer().draw(C_agent1.getV2fPosition().getX(), C_agent1.getV2fPosition().getY(), 40, 70);
+		//System.out.println("Agent at location" + C_agent1.getV2fPosition().getX() + " "+ C_agent1.getV2fPosition().getY());
+		//System.out.println("Draw enemy circle" + C_agent1.getBoundingCircle().getX() + "  " + C_agent1.getBoundingCircle().getY());
+		g.draw(C_agent1.getBoundingCircle());
+		
+		
+		image_agent2.setCenterOfRotation(25, 50);
+		C_agent2.getImagePointer().draw(C_agent2.getV2fPosition().x, C_agent2.getV2fPosition().y, 40, 70);
+		g.draw(C_agent2.getBoundingCircle());
+		
+		image_agent3.setCenterOfRotation(20, 50);
+		C_agent3.getImagePointer().draw(C_agent3.getV2fPosition().x, C_agent3.getV2fPosition().y, 40, 70);
+		g.draw(C_agent3.getBoundingCircle());
+		
+		image_agent4.setCenterOfRotation(20, 50);
+		C_agent4.getImagePointer().draw(C_agent4.getV2fPosition().x, C_agent4.getV2fPosition().y, 40, 70);
+		g.draw(C_agent4.getBoundingCircle());
+											
 		
 		// Image rotation
 		if(key_pressed == 1)
@@ -99,7 +146,7 @@ public class Main extends BasicGame{
 		// Display data
 		g.setColor(new Color(0, 0, 0));
 		g.drawString("Car Rotation: " + tempCarImage.getRotation(), 10, 20);
-		g.drawString("x: " + V2f_position.x + " y: " + V2f_position.y, 10, 35);
+		g.drawString("x: " + v2f_position.x + " y: " + v2f_position.y, 10, 35);
 		g.drawString("Mouse x: " + f_mouseX + "  y: " + f_mouseY, 10, 95);
 		
 		
@@ -112,13 +159,40 @@ public class Main extends BasicGame{
 		// Background
 		background = new Image("background.jpg");
 		
+		// Vector2f
+		v2f_position  = new Vector2f(f_carX, f_carY);
+		v2f_velocity = new Vector2f(0, 0);
+		v2f_acceleration = new Vector2f(0,0);
+		v2f_force = new Vector2f(0,0);
+		
+		v2f_positionAgt1 = new Vector2f(700.0f,500.0f);
+		
+		v2f_positionAgt2 = new Vector2f(700.0f,300.0f);
+		v2f_positionAgt3 = new Vector2f(300.0f,500.0f);
+		v2f_positionAgt4 = new Vector2f(450.0f,100.0f);
+		
+		// Agent array
+		agentArray = new ArrayList<CEnemyAgt>();
+		
 		// Entities
 		carImage = new Image("car.png");
-		C_car = new CCarEntity(f_carX, f_carY, id, carImage, f_carMass); // No bounding circle
+		image_agent1 = new Image("agent1.png");
+		image_agent2 = new Image("agent2.png");
+		image_agent3 = new Image("agent3.png");
+		image_agent4 = new Image("agent4.png");
 		
-		// Vector2f
-		V2f_position  = new Vector2f(f_carX, f_carY);
-		V2f_velocity = new Vector2f(0, 0);
+		C_car = new CCarEntity(v2f_position, id, carImage, f_carMass); // No bounding circle
+		
+		for(CEnemyAgt e : agentArray){
+			System.out.println(e);
+		}
+		C_agent1 = new CEnemyAgt(v2f_positionAgt1, 11, image_agent1, ON);	agentArray.add(C_agent1); 
+		C_agent2 = new CEnemyAgt(v2f_positionAgt2, 22, image_agent2, ON); 	agentArray.add(C_agent2);
+		C_agent3 = new CEnemyAgt(v2f_positionAgt3, 33, image_agent3, ON); 	agentArray.add(C_agent3);
+		C_agent4 = new CEnemyAgt(v2f_positionAgt4, 44, image_agent4, ON); 	agentArray.add(C_agent4);
+		
+		
+				 
 		
 		// Walls
 		float []points = {300,250,350,250,350,500,300,500}; // y coordinates are (max y - (coordinate))
@@ -149,18 +223,29 @@ public class Main extends BasicGame{
 	public void update(GameContainer gc, int delta) throws SlickException {
 		Input input = gc.getInput();
 		
-		C_car.entityUpdate(delta, V2f_velocity, V2f_position, f_theta, input);
+		// Entity updates
+		C_car.entityUpdate(delta, v2f_velocity, v2f_position, f_theta, input);
 		f_theta = C_car.getTheta();
-		//V2f_velocity = C_car.getV2fVelocity();
-		//System.out.println("----------" + (f_theta = C_car.getTheta()));
+		
 		key_pressed = C_car.getKeyPressed();
 		
-		
-		if(gc.getInput().isKeyPressed(Input.KEY_W)){
-			C_car.C_sensor.rangeFinderOnOff(!C_car.C_sensor.isOnOFf("range"));
+		// Turn Range Finder(wall sensor) on/off -- toggle
+		if(gc.getInput().isKeyPressed(Input.KEY_W) && (C_car.m_i_Id == 1)){
+			C_car.C_sensor.rangeFinderOnOff(!C_car.C_sensor.isOnOff("range"));
 			System.out.println("Range finder on/off !!!");
 		}
 		
+		// Turn Pie Slice Sensor on/off -- toggle
+		if(gc.getInput().isKeyPressed(Input.KEY_P) && (C_car.m_i_Id == 1)){
+			C_car.C_sensor.pieSliceSensorOnOff(!C_car.C_sensor.isOnOff("pie"));
+			System.out.println("Pie Slice Sensor on/off !!!");
+		}
+		
+		// Enemy agent updates
+		C_agent1.entityUpdate(delta, v2f_positionAgt1, f_thetaAgt1, input);
+		C_agent2.entityUpdate(delta, v2f_positionAgt2, f_thetaAgt2, input);
+		C_agent3.entityUpdate(delta, v2f_positionAgt3, f_thetaAgt3, input);
+		C_agent4.entityUpdate(delta, v2f_positionAgt4, f_thetaAgt4, input);
 		
 		// Mouse location
 		f_mouseX = input.getMouseX();

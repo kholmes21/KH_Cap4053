@@ -1,6 +1,7 @@
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Ellipse;
+import org.newdawn.slick.geom.Vector2f;
 
 
 public class CShipEntity extends CEntity {
@@ -29,8 +30,8 @@ public class CShipEntity extends CEntity {
 	
 
 	// Constructor
-	public CShipEntity(float x_position, float y_position, int id, Image originalPicture, Circle boundingCircle, float mass){
-		super(x_position, y_position, id, originalPicture);
+	public CShipEntity(Vector2f position, int id, Image originalPicture, Circle boundingCircle, float mass){
+		super(position, id, originalPicture);
 		// Bounding ellipse matched to the max dimension of entity
 		this.setM_boundingEllipse(false, m_imgPtr_ship);
 		this.setEntityMass(mass);
@@ -41,8 +42,8 @@ public class CShipEntity extends CEntity {
 
 
 	// Constructor - no bounding circle
-	public CShipEntity(float x_position, float y_position, int id, Image originalPicture, float mass){
-		super(x_position, y_position, id, originalPicture);
+	public CShipEntity(Vector2f position, int id, Image originalPicture, float mass){
+		super(position, id, originalPicture);
 		this.setEntityMass(mass);
 		
 		// Sensor
