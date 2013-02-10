@@ -120,6 +120,8 @@ public class Main extends BasicGame{
 		g.draw(C_agent1.getBoundingCircle());
 		
 		
+		
+		
 		image_agent2.setCenterOfRotation(25, 50);
 		C_agent2.getImagePointer().draw(C_agent2.getV2fPosition().x, C_agent2.getV2fPosition().y, 40, 70);
 		g.draw(C_agent2.getBoundingCircle());
@@ -165,11 +167,11 @@ public class Main extends BasicGame{
 		v2f_acceleration = new Vector2f(0,0);
 		v2f_force = new Vector2f(0,0);
 		
-		v2f_positionAgt1 = new Vector2f(700.0f,500.0f);
+		v2f_positionAgt1 = new Vector2f(600.0f,500.0f);
 		
-		v2f_positionAgt2 = new Vector2f(700.0f,300.0f);
-		v2f_positionAgt3 = new Vector2f(300.0f,500.0f);
-		v2f_positionAgt4 = new Vector2f(450.0f,100.0f);
+		v2f_positionAgt2 = new Vector2f(600.0f,300.0f);
+		v2f_positionAgt3 = new Vector2f(550.0f,250.0f);
+		v2f_positionAgt4 = new Vector2f(500.0f,300.0f);
 		
 		// Agent array
 		agentArray = new ArrayList<CEnemyAgt>();
@@ -180,6 +182,7 @@ public class Main extends BasicGame{
 		image_agent2 = new Image("agent2.png");
 		image_agent3 = new Image("agent3.png");
 		image_agent4 = new Image("agent4.png");
+		
 		
 		C_car = new CCarEntity(v2f_position, id, carImage, f_carMass); // No bounding circle
 		
@@ -242,15 +245,18 @@ public class Main extends BasicGame{
 		}
 		
 		// Enemy agent updates
-		C_agent1.entityUpdate(delta, v2f_positionAgt1, f_thetaAgt1, input);
-		C_agent2.entityUpdate(delta, v2f_positionAgt2, f_thetaAgt2, input);
-		C_agent3.entityUpdate(delta, v2f_positionAgt3, f_thetaAgt3, input);
-		C_agent4.entityUpdate(delta, v2f_positionAgt4, f_thetaAgt4, input);
+		C_agent1.entityUpdate(input);
+		C_agent2.entityUpdate(input);
+		C_agent3.entityUpdate(input);
+		C_agent4.entityUpdate(input);
 		
+				
 		// Mouse location
 		f_mouseX = input.getMouseX();
 		f_mouseY = input.getMouseY();
 	}
+
+	
 	
 	
 }

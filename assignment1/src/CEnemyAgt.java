@@ -4,8 +4,10 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 
 
-public class CEnemyAgt extends CEntity {
+public class CEnemyAgt extends CEntity{
 
+	
+	
 	// Member variables
 	int m_key_pressed = 0;
 	int m_delta;
@@ -32,6 +34,9 @@ public class CEnemyAgt extends CEntity {
 	private String str_string1;
 	private String str_circle;
 	
+	
+	
+	
 	//Constructor
 	public CEnemyAgt(Vector2f position, int id, Image originalPicture, boolean boundingCircle){
 		super(position, id, originalPicture);
@@ -51,7 +56,7 @@ public class CEnemyAgt extends CEntity {
 	public void setBoundingCircle(boolean reset) {
 		
 		if(reset == true){
-			this.m_boundingCircle.setLocation(this.m_v2f_position.x, this.m_v2f_position.y);
+			this.m_boundingCircle.setLocation(this.m_v2f_position.x - 15, this.m_v2f_position.y);
 			this.m_boundingCircle.setRadii((float)((this.m_imgPtr_picture.getWidth()/2.0f) + 5), (
 					float)((this.m_imgPtr_picture.getWidth()/2.0f) + 5));
 			//this.m_boundingEllipse = new Ellipse(this.getXposition() + 30, this.getYposition() + 30,
@@ -67,56 +72,28 @@ public class CEnemyAgt extends CEntity {
 			System.out.println("Set bounding circle for original image" + this.m_v2f_position.x + " " + this.m_v2f_position.y);
 			
 		}
-	
+		
 	}
 	
 	// Update function for entity
-	public void entityUpdate(int delta, Vector2f V2f_position, float f_theta, Input input){
-		
-		m_f_theta = f_theta;              // To guarantee that theta passed in is passed to sensor update if as-is unless changed
-		//m_v2f_velocity = V2f_velocity;    // by one of the *if* statements below.
-		m_v2f_position = V2f_position;
-		m_delta = delta;
-		//System.out.println("delta" + delta);
+	public void entityUpdate(Input input){
 		
 		
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			m_key_pressed = 2;
-			m_f_theta = (f_theta - 1.0f) * ((float)delta/100);
+		// Locate mouse if it's over one of the agents
+		if( Math.abs((int)((this.m_v2f_position.x + 20) - input.getMouseX())) < 20 &&  
+				Math.abs((int)((this.m_v2f_position.y + 35) - input.getMouseY())) < 20 ){
+			//System.out.println("Mouse Over" + this.getEntityID());
+			
+			if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
+				//System.out.println("left down" + this.getEntityID());
+				this.m_v2f_position.x = input.getMouseX() - 20;
+				this.m_v2f_position.y = input.getMouseY() - 35;
+				this.m_boundingCircle.setLocation(this.m_v2f_position.x - 15, this.m_v2f_position.y);
+			}
 		}
-		else if(input.isKeyDown(Input.KEY_RIGHT)){
-			m_key_pressed = 1;
-			m_f_theta = (f_theta + 1.0f) * ((float)delta/100);
-		}
-		else
-			m_key_pressed = 0;
 		
 		
-		// Moving the entity
-	    if (input.isKeyDown(Input.KEY_UP)) {
-	    	System.out.println("MOVE UP");
-	    	
-	    	// Runs move method for entity forward
-	    	move();  
-	      
-	    } 
-	    /*
-	    else {
-	    	m_v2f_velocity.set(0, 0);   // m_V2f_velocity = new Vector2f(0, 0); // This class has a new, empty vector above
-	    	m_d_forwardSpeed = 0;
-	    }
-		*/
-	    
-	   
 	}
-	
-	
-	
-	public void move(){//(float delta, Vector2f V2f_velocity, Vector2f V2f_position, float theta) {
-	   
-	}
-	
-	
 	
 
 
@@ -147,19 +124,6 @@ public class CEnemyAgt extends CEntity {
 		this.m_v2f_position = position;
 	}
 	
-	/*
-	// Get velocity
-	public Vector2f getV2fVelocity(){
-
-		return m_v2f_velocity;
-	}
-
-	// Set entity mass
-	public void setEntityMass(float mass) {
-		this.m_mass = mass;
-	}
-	*/
-	
 	
 	// Get bounding circle if it exists
 	public Circle getBoundingCircle(){
@@ -181,7 +145,10 @@ public class CEnemyAgt extends CEntity {
 		return str_circle + "\n" + "str_string1";
 	}
 
-	
-	
+
+
+		
 	
 } // end CEnemyAgt class
+
+

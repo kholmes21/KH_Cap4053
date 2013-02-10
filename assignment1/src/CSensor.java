@@ -13,7 +13,7 @@ import org.newdawn.slick.geom.Vector2f;
  * Pie slice sensors (radars) return activation levels
  * 
  */
-public class CSensor {
+public class CSensor{
 
 	public static final boolean ON = true;
 	public static final boolean OFF = false;
@@ -55,21 +55,24 @@ public class CSensor {
 	private Line L_lowLeftLine = new Line(0,0,0,0);
 	private Line L_upLeftLine = new Line(0,0,0,0);
 	
+	// Pie line length
 	private int i_pieRearLineLength = 230;
 	private int i_pieForwardLineLength = 250;
-	
 	private float f_pieThetaDiff = 0.7853981634f;
+	
+	// Polygon  
 	private	Shape frontPie = new Polygon();
 	private	Shape rightPie = new Polygon(); 
 	private	Shape rearPie = new Polygon();
 	private	Shape leftPie = new Polygon();
-	//private float[] frontPoints = new float[6];
+	
+	// Activation Level
 	private int frontActLevel = 0;
 	private int rightActLevel = 0;
 	private int rearActLevel = 0;
 	private int leftActLevel = 0;
-	private int totalActLevel = 0;
-	
+	//private int totalActLevel = 0;
+	private String[] sa_ActLevelMessage = {"0", "Low", "Medium", "High", "High"};	// Activation Level Strings
 	// Pointer to the entity
 	public CEntity C_entity;
 	
@@ -233,10 +236,45 @@ public class CSensor {
 			
 			
 			
-			// Sum the total activation level and render it
+			// Render each pie's activation level
+			
 			g.setColor(Color.black);
-			totalActLevel = frontActLevel + rightActLevel + rearActLevel + leftActLevel;
-			g.drawString("Front Pie Activation : " + totalActLevel, 10, 110);
+			//totalActLevel = frontActLevel + rightActLevel + rearActLevel + leftActLevel;
+			// Front
+			if(frontActLevel <= 3){
+				g.drawString("Front Pie Activation : " + sa_ActLevelMessage[frontActLevel], 10, 110);
+			}
+			if(frontActLevel > 3){
+				g.drawString("Front Pie Activation : " + "High", 10, 110);
+			}
+			
+			// Right
+			if(rightActLevel <= 3){
+				g.drawString("Right Pie Activation : " + sa_ActLevelMessage[rightActLevel], 10, 125);
+			}
+			if(rightActLevel > 3){
+				g.drawString("Right Pie Activation : " + "High", 10, 125);
+			}
+			
+			// Rear
+			if(rearActLevel <= 3){
+				g.drawString("Rear Pie Activation : " + sa_ActLevelMessage[rearActLevel], 10, 155);
+			}
+			if(rearActLevel > 3){
+				g.drawString("Rear Pie Activation : " + "High", 10, 155);
+			}
+			
+			// Left
+			if(leftActLevel <= 3){
+				g.drawString("Left Pie Activation : " + sa_ActLevelMessage[leftActLevel], 10, 140);
+			}
+			if(leftActLevel > 3){
+				g.drawString("Left Pie Activation : " + "High", 10, 140);
+			}
+			
+			
+			
+			
 			
 		}
 		
@@ -273,7 +311,7 @@ public class CSensor {
 			L_feeler3.set(f_tempX, f_tempY, f_tempX - ( (float)((f_leftFeelerLength * Math.sin(f_thetaDiff))) ),
 											f_tempY - ( (float)(f_leftFeelerLength * Math.cos(f_thetaDiff))) );
 			
-			System.out.println("Feelers");
+			//System.out.println("Feelers");
 		}
 		// Project feelers at all other angles
 		else{
@@ -304,7 +342,7 @@ public class CSensor {
 			if( L_feeler1.intersects(wall) ){
 
 				intersectFlag = true;
-				System.out.println("INTERSECTION");
+				//System.out.println("INTERSECTION");
 				// Look for any double intersections and take the closest one
 				if(v2f_intersect1.x == -10.0f){
 
@@ -343,7 +381,7 @@ public class CSensor {
 					}
 
 					// Send distance to display
-					f_centerFeelerDist = f_centerCloseDist - 50;	// f_centerFeelerDist - 50 to account for image center
+					f_centerFeelerDist = f_centerCloseDist - 52;	// f_centerFeelerDist - 50 to account for image center
 
 					v2f_intersect1.set(-10.0f, -10.0f);
 					v2f_intersect2.set(-10.0f, -10.0f);
@@ -375,7 +413,7 @@ public class CSensor {
 			f_centerFeelerLength = f_centerCloseDist - 1;
 
 			// Send distance to display
-			f_centerFeelerDist = f_centerCloseDist - 50;	// f_centerFeelerDist - 50 to account for image center
+			f_centerFeelerDist = f_centerCloseDist - 51;	// f_centerFeelerDist - 50 to account for image center
 
 		}
 		// No intersection and vehicle has moved,  redraw feeler to normal length if it is less than normal
@@ -384,7 +422,7 @@ public class CSensor {
 
 			if(f_centerFeelerLength < f_standardFeelerLength ){
 				f_centerFeelerLength = f_standardFeelerLength;
-				System.out.println("Re-extend feeler");
+				//System.out.println("Re-extend feeler");
 			}
 			f_tempX2 = -1.0f;	f_tempY2 = -1.0f; 	f_theta2 = -1.0;
 		}
@@ -424,17 +462,17 @@ public class CSensor {
 			if( L_feeler2.intersects(wall) ){
 
 				intersectFlag = true;
-				System.out.println("feeler2_INTERSECTION");
+				//System.out.println("feeler2_INTERSECTION");
 				// Look for any double intersections and take the closest one
 				if(v2f_intersect1.x == -10.0f){
 
 					// Get an intersection
 					L_feeler2.intersect(wall, ON, v2f_intersect1);
-					System.out.println("feeler2_v_intersect1");
+					//System.out.println("feeler2_v_intersect1");
 				}
 				else if(v2f_intersect2.x == -10.0){
 					L_feeler2.intersect(wall, ON, v2f_intersect2);
-					System.out.println("feeler2_v_intersect2");
+					//System.out.println("feeler2_v_intersect2");
 				}
 
 				// There are two walls intersected, use the POI with shortest distance
@@ -459,19 +497,19 @@ public class CSensor {
 					if( f_rightFeelerLength > f_rightCloseDist ){
 						f_rightFeelerLength = f_rightCloseDist - 1;
 
-						System.out.println("feeler2_Shorten feeler to intersection - double intersection");
+						//System.out.println("feeler2_Shorten feeler to intersection - double intersection");
 					}
 
 					// Send distance to display
 					// Distance to side from known angle (45 deg) and length variable f_rightCloseDist
-					f_rightFeelDist = (float)((Math.sin(f_thetaDiff) * f_rightCloseDist) - 18);
+					f_rightFeelDist = (float)((Math.sin(f_thetaDiff) * f_rightCloseDist) - 20);
 					//f_rightFeelDist = f_rightCloseDist - 5;	// f_centerFeelerDist - 50 to account for image center
 
 					v2f_intersect1.set(-10.0f, -10.0f);
 					v2f_intersect2.set(-10.0f, -10.0f);
 					intersectFlag = false;  // prevent any more distance calculations outside of this *if*.
 					dbintersectFlag = true;
-					System.out.println("feeler2_Double intersection");
+					//System.out.println("feeler2_Double intersection");
 
 				} // end find closest intersection	
 
@@ -486,7 +524,7 @@ public class CSensor {
 			f_rightCloseDist = (float)Math.sqrt( ((v2f_intersect1.x - f_tempX) * (v2f_intersect1.x - f_tempX)) +  // (x2 - x1)^2 + 
 					((v2f_intersect1.y - f_tempY) * (v2f_intersect1.y - f_tempY)) ); //	(y2 - y1)^2 = distance
 
-			System.out.println("feeler2_Only 1 intersection");
+			//System.out.println("feeler2_Only 1 intersection");
 
 		}
 
@@ -500,7 +538,7 @@ public class CSensor {
 			// Distance to side from known angle (45 deg) and length variable f_rightCloseDist
 			f_rightFeelDist = (float)((Math.sin(f_thetaDiff) * f_rightCloseDist) - 18);
 
-			System.out.println("feeler2_Shorten feeler to intersection");
+			//System.out.println("feeler2_Shorten feeler to intersection");
 		}
 		// No intersection and vehicle has moved,  redraw feeler to normal length if it is less than normal
 		//else{
@@ -508,7 +546,7 @@ public class CSensor {
 
 			if(f_rightFeelerLength < f_standardFeelerLength ){
 				f_rightFeelerLength = f_standardFeelerLength;
-				System.out.println("feeler2_Re-extend feeler");
+				//System.out.println("feeler2_Re-extend feeler");
 			}
 			f_tempX2 = -1.0f;	f_tempY2 = -1.0f; 	f_theta2 = -1.0;
 		}
@@ -550,17 +588,17 @@ public class CSensor {
 			if( L_feeler3.intersects(wall) ){
 
 				intersectFlag = true;
-				System.out.println("feeler3_INTERSECTION");
+				//System.out.println("feeler3_INTERSECTION");
 				// Look for any double intersections and take the closest one
 				if(v2f_intersect1.x == -10.0f){
 
 					// Get an intersection
 					L_feeler3.intersect(wall, ON, v2f_intersect1);
-					System.out.println("feeler3_v_intersect1");
+					//System.out.println("feeler3_v_intersect1");
 				}
 				else if(v2f_intersect2.x == -10.0){
 					L_feeler3.intersect(wall, ON, v2f_intersect2);
-					System.out.println("feeler3_v_intersect2");
+					//System.out.println("feeler3_v_intersect2");
 				}
 
 				// There are two walls intersected, use the POI with shortest distance
@@ -585,18 +623,18 @@ public class CSensor {
 					if( f_leftFeelerLength > f_leftCloseDist ){
 						f_leftFeelerLength = f_leftCloseDist - 1;
 
-						System.out.println("feeler3_Shorten feeler to intersection - double intersection");
+						//System.out.println("feeler3_Shorten feeler to intersection - double intersection");
 					}
 
 					// Send distance to display
 					// Distance to side from known angle (45 deg) and length variable f_rightCloseDist
-					f_leftFeelDist = (float)((Math.sin(f_thetaDiff) * f_leftCloseDist) - 18);
+					f_leftFeelDist = (float)((Math.sin(f_thetaDiff) * f_leftCloseDist) - 20);
 	
 					v2f_intersect1.set(-10.0f, -10.0f);
 					v2f_intersect2.set(-10.0f, -10.0f);
 					intersectFlag = false;  // prevent any more distance calculations outside of this *if*.
 					dbintersectFlag = true;
-					System.out.println("feeler3_Double intersection");
+					//System.out.println("feeler3_Double intersection");
 
 				} // end find closest intersection	
 
@@ -611,7 +649,7 @@ public class CSensor {
 			f_leftCloseDist = (float)Math.sqrt( ((v2f_intersect1.x - f_tempX) * (v2f_intersect1.x - f_tempX)) +  // (x2 - x1)^2 + 
 					((v2f_intersect1.y - f_tempY) * (v2f_intersect1.y - f_tempY)) ); //	(y2 - y1)^2 = distance
 
-			System.out.println("feeler3_Only 1 intersection");
+			//System.out.println("feeler3_Only 1 intersection");
 
 		}
 
@@ -625,14 +663,14 @@ public class CSensor {
 			// Distance to side from known angle (45 deg) and length variable f_rightCloseDist
 			f_leftFeelDist = (float)((Math.sin(f_thetaDiff) * f_leftCloseDist) - 18);
 
-			System.out.println("feeler3_Shorten feeler to intersection");
+			//System.out.println("feeler3_Shorten feeler to intersection");
 		}
 		// No intersection and vehicle has moved,  redraw feeler to normal length if it is less than normal
 		if( (f_tempX2 != f_tempX | f_tempY2 != f_tempY | f_theta2 != f_theta) && intersectFlag == false){
 
 			if(f_leftFeelerLength < f_standardFeelerLength ){
 				f_leftFeelerLength = f_standardFeelerLength;
-				System.out.println("feeler3_Re-extend feeler");
+				//System.out.println("feeler3_Re-extend feeler");
 			}
 			f_tempX2 = -1.0f;	f_tempY2 = -1.0f; 	f_theta2 = -1.0;
 		}
@@ -703,12 +741,12 @@ public class CSensor {
 			
 			// Get its ID
 			Integer id = c.getEntityID();
-			System.out.println("Enemy " + id);
+			//System.out.println("Enemy " + id);
 			
 			// Some enemy agent's bounding circle is within our forward radar -- FORWARD RADAR
-			if(frontPie.contains(c.m_boundingCircle)){
+			if(frontPie.contains(c.m_boundingCircle) | frontPie.intersects(c.m_boundingCircle)){
 				
-				System.out.println("In Front Pie " + id);
+				//System.out.println("In Front Pie " + id);
 				// This enemy is not on our list of enemies
 				if(!enemyAgtIDarrayFront.contains(id)){
 					
@@ -717,7 +755,7 @@ public class CSensor {
 
 					// Increase activation level
 					frontActLevel += 1;
-					System.out.println("Add to array " + id + "Activation " + frontActLevel);
+					//System.out.println("Add to array " + id + "Activation " + frontActLevel);
 				}
 				
 			
@@ -725,7 +763,7 @@ public class CSensor {
 			
 			
 			// Some enemy agent's bounding circle is within our forward radar -- RIGHT RADAR
-			if(rightPie.contains(c.m_boundingCircle)){
+			if(rightPie.contains(c.m_boundingCircle) | rightPie.intersects(c.m_boundingCircle)){
 
 				// This enemy is not on our list of enemies
 				if(!enemyAgtIDarrayRight.contains(id)){
@@ -741,7 +779,7 @@ public class CSensor {
 			} // end *if* enemy in our forward radar
 			
 			// Some enemy agent's bounding circle is within our forward radar -- REAR RADAR
-			if(rearPie.contains(c.m_boundingCircle)){
+			if(rearPie.contains(c.m_boundingCircle) | rearPie.intersects(c.m_boundingCircle)){
 
 				// This enemy is not on our list of enemies
 				if(!enemyAgtIDarrayRear.contains(id)){
@@ -757,7 +795,7 @@ public class CSensor {
 			} // end *if* enemy in our forward radar
 			
 			// Some enemy agent's bounding circle is within our forward radar -- LEFT RADAR
-			if(leftPie.contains(c.m_boundingCircle)){
+			if(leftPie.contains(c.m_boundingCircle) | leftPie.intersects(c.m_boundingCircle)){
 
 				// This enemy is not on our list of enemies
 				if(!enemyAgtIDarrayLeft.contains(id)){
@@ -797,7 +835,8 @@ public class CSensor {
 			*/
 			
 			// This enemy agent is NOT within our radar but it is on our list of enemies -- FORWARD RADAR
-			if( ( !frontPie.contains(cn.m_boundingCircle) )  &&  (enemyAgtIDarrayFront.contains(j)) ){
+			if( ( !frontPie.contains(cn.m_boundingCircle) )  &&  ( !frontPie.intersects(cn.m_boundingCircle) ) &&
+					(enemyAgtIDarrayFront.contains(j)) ){
 				
 				// Remove this enemy from our list
 				enemyAgtIDarrayFront.remove(j);
@@ -808,7 +847,8 @@ public class CSensor {
 			}
 			
 			// This enemy agent is NOT within our radar but it is on our list of enemies -- RIGHT RADAR
-			if( ( !rightPie.contains(cn.m_boundingCircle) )  &&  (enemyAgtIDarrayRight.contains(j)) ){
+			if( ( !rightPie.contains(cn.m_boundingCircle) )  &&  ( !rightPie.intersects(cn.m_boundingCircle) ) && 
+					(enemyAgtIDarrayRight.contains(j)) ){
 
 				// Remove this enemy from our list
 				enemyAgtIDarrayRight.remove(j);
@@ -819,7 +859,8 @@ public class CSensor {
 			}
 			
 			// This enemy agent is NOT within our radar but it is on our list of enemies -- REAR RADAR
-			if( ( !rearPie.contains(cn.m_boundingCircle) )  &&  (enemyAgtIDarrayRear.contains(j)) ){
+			if( ( !rearPie.contains(cn.m_boundingCircle) )  &&  ( !rearPie.intersects(cn.m_boundingCircle) ) &&
+					(enemyAgtIDarrayRear.contains(j)) ){
 
 				// Remove this enemy from our list
 				enemyAgtIDarrayRear.remove(j);
@@ -830,7 +871,8 @@ public class CSensor {
 			}
 			
 			// This enemy agent is NOT within our radar but it is on our list of enemies -- LEFT RADAR
-			if( ( !leftPie.contains(cn.m_boundingCircle) )  &&  (enemyAgtIDarrayLeft.contains(j)) ){
+			if( ( !leftPie.contains(cn.m_boundingCircle) )  &&  ( !leftPie.intersects(cn.m_boundingCircle) ) &&
+					(enemyAgtIDarrayLeft.contains(j)) ){
 
 				// Remove this enemy from our list
 				enemyAgtIDarrayLeft.remove(j);
@@ -898,5 +940,7 @@ public class CSensor {
 	public void rangeFinderOnOff(boolean flipSwitch) {
 		this.m_bl_rangeFinder = flipSwitch;
 	}
+
+
 
 }
