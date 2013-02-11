@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
@@ -18,6 +19,12 @@ public class CSensor{
 	public static final boolean ON = true;
 	public static final boolean OFF = false;
 	
+	// Pointer to the entity
+	public CEntity C_entity;
+	private CEnemyAgt tempAgent1;
+	private CEnemyAgt tempAgent2;
+	private CEnemyAgt tempAgent3;
+	
 	// Range finder lines
 	public Line L_feeler1 = new Line(0.0f, 0.0f, 0.0f, 0.0f);
 	public Line L_feeler2 = new Line(0.0f, 0.0f, 0.0f, 0.0f);
@@ -28,7 +35,7 @@ public class CSensor{
 	
 	// Turn sensors on and off
 	public boolean m_bl_rangeFinder = OFF;
-	public boolean m_bl_agentSensor = OFF;
+	public boolean m_bl_agentFinder = OFF;
 	public boolean m_bl_radar = OFF;
 	
 	// Range finder
@@ -55,6 +62,15 @@ public class CSensor{
 	private Line L_lowLeftLine = new Line(0,0,0,0);
 	private Line L_upLeftLine = new Line(0,0,0,0);
 	
+	// Agent Finder
+	public Circle user_range = new Circle(0,0,70);
+	private boolean radarAgent1 = false;
+	private boolean radarAgent2 = false;
+	private boolean radarAgent3 = false;
+	private float agent1Distance = 0;
+	private float agent2Distance = 0;
+	private float agent3Distance = 0;
+	
 	// Pie line length
 	private int i_pieRearLineLength = 230;
 	private int i_pieForwardLineLength = 250;
@@ -73,8 +89,7 @@ public class CSensor{
 	private int leftActLevel = 0;
 	//private int totalActLevel = 0;
 	private String[] sa_ActLevelMessage = {"0", "Low", "Medium", "High", "High"};	// Activation Level Strings
-	// Pointer to the entity
-	public CEntity C_entity;
+	
 	
 	// Access to drawing space
 	Graphics g;
@@ -113,7 +128,7 @@ public class CSensor{
 	public CSensor(boolean bl_range, boolean bl_agent, boolean bl_radar, CEntity entity) {
 		
 		this.rangeFinderOnOff(bl_range);
-		this.agentSensorOnOff(bl_agent);
+		this.agentFinderOnOff(bl_agent);
 		this.pieSliceSensorOnOff(bl_radar);
 		this.C_entity = entity;
 		
@@ -128,14 +143,16 @@ public class CSensor{
 			rangeFinder(theta,  m_V2f_position, m_V2f_velocity);
 		}
 		
-		// Run agent sensor method
-		if(m_bl_agentSensor == ON){
+		// Run agent finder method
+		if(m_bl_agentFinder == ON){
+			
 			// Do agent sensing
-			agentSensor();
+			agentFinder();
 		}
 		
 		// Run pie slice sensor method
 		if(m_bl_radar == ON){
+			
 			// Do radar
 			pieSliceSensor();
 			//System.out.println("Pie Slice Sensor / Radar sensor -Active");
@@ -146,8 +163,8 @@ public class CSensor{
 	public void sensorRender(Graphics g){
 		
 		// Render range sensor
-		if(m_bl_rangeFinder == ON){
-			
+		if(m_bl_rangeFinder == ON){																		// RANGE SENSOR //
+				
 			// Draw feeler colors
 			g.setColor(new Color(0, 0, 0));  //g.setColor(new Color(27, 224, 27)); // Green feeler
 			g.draw(L_feeler1);	
@@ -178,10 +195,27 @@ public class CSensor{
 
 		}
 		
-		// Render agent sensor
-		if(m_bl_agentSensor == ON){
-	
+		
+		// Render agent finder
+		if(m_bl_agentFinder == ON){
+																									// AGENT FINDER //
+			// Agent finder has sensed an agent so
+			// display that agent's distance
+			if(radarAgent1){
+				g.drawString("Agent 1 Distance : " + agent1Distance, 10, 100);
+			}
+			if(radarAgent2){
+				g.drawString("Agent 2 Distance : " + agent2Distance, 10, 115);
+			}
+			if(radarAgent3){
+				g.drawString("Agent 3 Distance : " + agent3Distance, 530, 100);
+			}
+				
+			
+			// Draw agent finder circle
+			g.draw(user_range);
 		}
+		
 		
 		// Render pie slice sensor
 		if(m_bl_radar == ON){
@@ -192,7 +226,7 @@ public class CSensor{
 			
 			g.setColor(Color.black);
 			g.draw(L_lowRightLine);
-			
+																									// PIE SLICE SENSOR //
 			g.setColor(Color.green);
 			g.draw(L_lowLeftLine);
 			
@@ -242,35 +276,37 @@ public class CSensor{
 			//totalActLevel = frontActLevel + rightActLevel + rearActLevel + leftActLevel;
 			// Front
 			if(frontActLevel <= 3){
-				g.drawString("Front Pie Activation : " + sa_ActLevelMessage[frontActLevel], 10, 110);
+				g.drawString("Front Pie Activation : " + sa_ActLevelMessage[frontActLevel], 530, 20);
 			}
 			if(frontActLevel > 3){
-				g.drawString("Front Pie Activation : " + "High", 10, 110);
-			}
-			
-			// Right
-			if(rightActLevel <= 3){
-				g.drawString("Right Pie Activation : " + sa_ActLevelMessage[rightActLevel], 10, 125);
-			}
-			if(rightActLevel > 3){
-				g.drawString("Right Pie Activation : " + "High", 10, 125);
-			}
-			
-			// Rear
-			if(rearActLevel <= 3){
-				g.drawString("Rear Pie Activation : " + sa_ActLevelMessage[rearActLevel], 10, 155);
-			}
-			if(rearActLevel > 3){
-				g.drawString("Rear Pie Activation : " + "High", 10, 155);
+				g.drawString("Front Pie Activation : " + "High", 530, 20);
 			}
 			
 			// Left
 			if(leftActLevel <= 3){
-				g.drawString("Left Pie Activation : " + sa_ActLevelMessage[leftActLevel], 10, 140);
+				g.drawString("Left  Pie Activation : " + sa_ActLevelMessage[leftActLevel], 530, 35);
 			}
 			if(leftActLevel > 3){
-				g.drawString("Left Pie Activation : " + "High", 10, 140);
+				g.drawString("Left  Pie Activation : " + "High", 530, 35);
 			}
+			
+			// Right
+			if(rightActLevel <= 3){
+				g.drawString("Right Pie Activation : " + sa_ActLevelMessage[rightActLevel], 530, 50);
+			}
+			if(rightActLevel > 3){
+				g.drawString("Right Pie Activation : " + "High", 530, 50);
+			}
+			
+			// Rear
+			if(rearActLevel <= 3){
+				g.drawString("Rear  Pie Activation : " + sa_ActLevelMessage[rearActLevel], 530, 65);
+			}
+			if(rearActLevel > 3){
+				g.drawString("Rear  Pie Activation : " + "High", 530, 65);
+			}
+			
+			
 			
 			
 			
@@ -893,13 +929,143 @@ public class CSensor{
 	
 	
 	// Agent sensing
-	public void agentSensor(){
-		
+	public void agentFinder(){
 		
 		// Need function
 		
+			//printRadar = true;
+			
+			// Attach a radar to the subject
+			user_range.setLocation(C_entity.getXposition() - 50, C_entity.getYposition() - 25);
+			
+			
+			// Loop through all available agents and test to see if the subject's 
+			// agent radar intersects one of the agent bounding circles
+			for(CEnemyAgt agent : Main.agentArray){
+				
+				// We found Agent 1
+				if(agent.getEntityID() == 1){
+					
+					// Uniquely identify this agent
+					tempAgent1 = agent;
+					
+					// Calculate Agent 1's distance and report
+					if(user_range.intersects(tempAgent1.getBoundingCircle())){
+						
+						radarAgent1 = true;
+						
+						if(user_range.getCenterX() > tempAgent1.getBoundingCircle().getCenterX() && 
+								user_range.getCenterY() > tempAgent1.getBoundingCircle().getCenterY()){
+							agent1Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent1.getBoundingCircle().getCenterX(), 
+									user_range.getCenterY() - tempAgent1.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent1.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() > tempAgent1.getBoundingCircle().getCenterY()){
+							agent1Distance = (float)Math.hypot(tempAgent1.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									user_range.getCenterY() - tempAgent1.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() > tempAgent1.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent1.getBoundingCircle().getCenterY()){
+							agent1Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent1.getBoundingCircle().getCenterX(), 
+									tempAgent1.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent1.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent1.getBoundingCircle().getCenterY()){
+							agent1Distance = (float)Math.hypot(tempAgent1.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									tempAgent1.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+					}
+					else{
+						radarAgent1 = false;
+					}
+					
+				} // end if Agent 1
+				
+					
+				// We found Agent 2
+				if(agent.getEntityID() == 2){
+					
+					// Uniquely identify this agent
+					tempAgent2 = agent;
+					
+					// Calculate Agent 2's distance and report
+					if(user_range.intersects(tempAgent2.getBoundingCircle())){
+						
+						radarAgent2 = true;
+						
+						if(user_range.getCenterX() > tempAgent2.getBoundingCircle().getCenterX() && 
+								user_range.getCenterY() > tempAgent2.getBoundingCircle().getCenterY()){
+							agent2Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent2.getBoundingCircle().getCenterX(), 
+									user_range.getCenterY() - tempAgent2.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent2.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() > tempAgent2.getBoundingCircle().getCenterY()){
+							agent2Distance = (float)Math.hypot(tempAgent2.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									user_range.getCenterY() - tempAgent2.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() > tempAgent2.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent2.getBoundingCircle().getCenterY()){
+							agent2Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent2.getBoundingCircle().getCenterX(), 
+									tempAgent2.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent2.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent2.getBoundingCircle().getCenterY()){
+							agent2Distance = (float)Math.hypot(tempAgent2.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									tempAgent2.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+					}
+					else{
+						radarAgent2 = false;
+					}
+					
+				}// end if Agent 1
+				
+					
+				// We found Agent 3
+				if(agent.getEntityID() == 3){
+					
+					
+					// Uniquely identify this agent
+					tempAgent3 = agent;
+					
+					// Calculate Agent 3's distance and report
+					if(user_range.intersects(tempAgent3.getBoundingCircle())){
+						
+						radarAgent3 = true;
+						
+						if(user_range.getCenterX() > tempAgent3.getBoundingCircle().getCenterX() && 
+								user_range.getCenterY() > tempAgent3.getBoundingCircle().getCenterY()){
+							agent3Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent3.getBoundingCircle().getCenterX(), 
+									user_range.getCenterY() - tempAgent3.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent3.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() > tempAgent3.getBoundingCircle().getCenterY()){
+							agent3Distance = (float)Math.hypot(tempAgent3.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									user_range.getCenterY() - tempAgent3.getBoundingCircle().getCenterY());
+						}
+						else if(user_range.getCenterX() > tempAgent3.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent3.getBoundingCircle().getCenterY()){
+							agent3Distance = (float)Math.hypot(user_range.getCenterX() - tempAgent3.getBoundingCircle().getCenterX(), 
+									tempAgent3.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+						else if(user_range.getCenterX() < tempAgent3.getBoundingCircle().getCenterX() &&
+								user_range.getCenterY() < tempAgent3.getBoundingCircle().getCenterY()){
+							agent3Distance = (float)Math.hypot(tempAgent3.getBoundingCircle().getCenterX() - user_range.getCenterX(), 
+									tempAgent3.getBoundingCircle().getCenterY() - user_range.getCenterY());
+						}
+					}
+					else{
+						radarAgent3 = false;
+					}
+					
+				} // end if Agent 3
+					
+				
+					
+			} // end agent finder for loop
+			
 		
-	} // end agent sensor
+	} // end agent finder method
 
 
 	
@@ -919,7 +1085,7 @@ public class CSensor{
 			return this.m_bl_rangeFinder;
 		}
 		else if(key.compareTo("agent") == 0){
-			return this.m_bl_agentSensor;
+			return this.m_bl_agentFinder;
 		}
 		else if(key.compareTo("pie") == 0){
 			return this.m_bl_radar;
@@ -931,8 +1097,8 @@ public class CSensor{
 	
 
 	// Turn agent sensor on / off
-	public void agentSensorOnOff(boolean flipSwitch) {
-		this.m_bl_agentSensor = flipSwitch;
+	public void agentFinderOnOff(boolean flipSwitch) {
+		this.m_bl_agentFinder = flipSwitch;
 	}
 	
 

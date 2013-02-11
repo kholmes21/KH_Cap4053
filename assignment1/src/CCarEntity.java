@@ -23,6 +23,7 @@ public class CCarEntity extends CEntity{
 	
 	// Bounding circle
 	public Circle m_boundingCircle;
+	
 		
 	// Sensor class container
 	public CSensor C_sensor;
@@ -145,26 +146,8 @@ public class CCarEntity extends CEntity{
 		m_v2f_acceleration.set(0, 0);   //m_V2f_acceleration = new Vector2f(0, 0); // This class has a new, empty vector above
 		m_d_angle = (float)(Math.toRadians(this.getImagePointer().getRotation()));
 		
-	    System.out.println("Angle from image " + m_d_angle);
-	    /*
-	    if(m_angle > 0 && m_angle < 90){
-	    	m_V2f_velocity.x = (float)Math.cos(m_angle);
-	    	m_V2f_velocity.y = -(float)(Math.cos(m_angle) / Math.tan(m_angle)); // Math.cos, etc require a double to work properly
-	    }
-	    else if(m_angle > 90 && m_angle < 180){
-	    	m_V2f_velocity.x = -(float)Math.cos(m_angle);
-	    	m_V2f_velocity.y = (float)(Math.cos(m_angle) / Math.tan(m_angle));
-	    }
-	    else if(m_angle < 0 && m_angle > -90){
-	    	
-	    	m_V2f_velocity.x = -(float)Math.cos(m_angle);
-	    	m_V2f_velocity.y = (float)(Math.cos(m_angle) / Math.tan(m_angle));
-	    }
-	    else if(m_angle < -90 && m_angle > -180){
-	    	m_V2f_velocity.x = (float)Math.cos(m_angle);
-	    	m_V2f_velocity.y = -(float)(Math.cos(m_angle) / Math.tan(m_angle));
-	    }
-	    */
+	    //System.out.println("Angle from image " + m_d_angle);
+	    
 	    // Calculate a new position vector by adding a velocity vector
 	    // Velocity vector has an angle m_angle from the entity's rotation
 	    // and a magnitude that is hard coded and changes with (delta) up to a max value
@@ -187,6 +170,18 @@ public class CCarEntity extends CEntity{
 	    System.out.println("VELOCITY ADDED " + m_v2f_velocity);
 	    m_v2f_position = m_v2f_position.add(m_v2f_velocity);
 	    System.out.println("NEW POSITION " + m_v2f_position);
+	    
+	    /*
+	    if((user_range.intersects(agent1) || user_range.intersects(agent2))){
+	    	if(agentBool == true)
+	    		agentFinder();
+	    }
+	    else{
+	    	printRadar = false;
+	    	agent1Distance = -1;
+	    	agent2Distance = -1;
+	    }
+		*/
 	    
 	    // Update sensors
 	    this.C_sensor.sensorUpdate(m_f_theta, m_v2f_position, m_v2f_velocity);
